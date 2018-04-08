@@ -1,0 +1,13 @@
+/.project
+/.target
+*.bak
+/bin/
+/PACTDownloader/run.bat
+springcm
+.idea
+*.iml
+*.log
+target
+*.out
+*.xlsx
+*.csv

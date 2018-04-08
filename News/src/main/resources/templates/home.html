@@ -1,0 +1,209 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <script language="javascript">
+        angular
+            .module('Application', ['ngMaterial'])
+            .controller('DataSetController', DataSetController);
+
+
+        function DataSetController($scope, $http) {
+            $scope.fn_load = function () {
+                console.log("page load")
+            };
+            $scope.reset = function () {
+                console.log("$scope.reset :" + $scope.dataSet);
+                var data = {dataId: $scope.dataSet};
+//                var url = 'http://localhost:8080/GetAllFromDataSet';
+                var url = 'https://calm-shelf-16940.herokuapp.com/GetAllFromDataSet';
+                var config = {
+                    headers: {'Content-Type': 'application/json'}
+                };
+
+                $http({
+                    method: 'POST',
+                    url: url,
+                    header: config,
+                    params: data
+                }).then(function successCallback(response) {
+                    // this callback will be called asynchronously
+                    // when the response is available
+                    console.log("Respond : " + response.data);
+                    var dataReturn = response.data;
+                    $scope.servers = dataReturn;
+                    $scope.returnDataset = dataReturn.data;
+                }, function errorCallback(response) {
+                    // called asynchronously if an error occurs
+                    // or server returns response with an error status.
+                });
+            };
+            $scope.getAllDataSet = function () {
+                console.log("$scope.getAllDataSet :");
+                var url = 'https://calm-shelf-16940.herokuapp.com/GetDataSets';
+                var config = {
+                    headers: {'Content-Type': 'application/json'}
+                };
+                $http({
+                    method: 'GET',
+                    url: url,
+                    header: config,
+                }).then(function successCallback(response) {
+                    // this callback will be called asynchronously
+                    // when the response is available
+                    console.log("Respond : " + response.data);
+                    var dataReturn = response.data;
+                    $scope.data = dataReturn;
+                    $scope.dataId = dataReturn.data;
+                    console.log("DataID :" + dataReturn.name);
+                }, function errorCallback(response) {
+                    // called asynchronously if an error occurs
+                    // or server returns response with an error status.
+                });
+
+            }
+        }
+    </script>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="/">Home</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="">Next</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"
+        integrity="sha384-feJI7QwhOS+hwpX2zkaeJQjeiwlhOP+SdQDqhgvvo1DsjtiSQByFdThsxO669S2D"
+        crossorigin="anonymous"></script>
+<div class="jumbotron">
+    <main role="main" class="container">
+        <h1 class="mt-1">News World</h1>
+        <p class="lead">Please choose Country and Category and Click button News</p>
+    </main>
+</div>
+
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <select class="custom-select d-block w-100" required="true" name="countries" form="News">
+                    <option value="">Choose Countries</option>
+                    <option th:each="data : ${keyCountries}" th:value="${data.getCode()}">
+                        <span th:text="${data.getName()}"/>
+                    </option>
+                </select>
+                <div class="invalid-feedback">
+                    Please select a Countries.
+                </div>
+            </div>
+            <div class="col-md-6">
+                <select class="custom-select d-block w-100" required="true" name="categories" form="News">
+                    <option value="">Choose Categories</option>
+                    <option th:each="category : ${keyCategories}">
+                        <span th:text="${category}"/>
+                    </option>
+                </select>
+                <div class="invalid-feedback">
+                    Please select a Categories.
+                </div>
+            </div>
+            <div class="col-md-12"/>
+            <div class="col-md-12">
+                <form action="#" th:action="@{'/news'}" method="POST" id="News">
+                    <input class="btn btn-primary btn-lg btn-block" type="submit" value="News" form="News"/>
+                </form>
+            </div>
+            <div class="col-md-12">
+                <form class="form-inline mt-2 mt-md-0" th:action="@{'/searchNews'}" method="GET">
+                    <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="q"/>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+            <div th:if="${error}">
+                <p th:text="${error}"></p>
+            </div>
+            <div class="container">
+                <div th:if="${not #lists.isEmpty(keyVisionDatasets)}">
+                    <div class="row">
+                        <div class="col-md-4" th:each="data : ${keyVisionDatasets.getArticles()}">
+                            <h2 th:text="${data.getTitle()}"/>
+                            <h3 th:text="@{'Author : '+ ${data.getAuthor()}}"></h3>
+                            <p th:text="${data.getDescription()}"/>
+                            <p th:text="${data.getDate()}"/>
+                            <p th:text="@{'Source Name : ' +${data.getSourceName()}}"/>
+                            <a th:href="${data.getArticleUrl()}"/>
+                            <img th:src="${data.getImageUrl()}" width="50" height="50"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${keyNews}">
+                <div class="row">
+                    <div class="col-md-4" th:each="data : ${keyNews}">
+                        <h2 th:text="${data.title}"/>
+                        <h3 th:text="@{'Author : '+ ${data.author}}"></h3>
+                        <p th:text="${data.description}"/>
+                        <p th:text="${data.date}"/>
+                        <p th:text="@{'Source Name : ' +${data.sourceName}}"/>
+                        <a th:href="${data.articleUrl}"/>
+                        <img th:src="${data.imageUrl}" width="50" height="50"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item" th:class="${currentIndex == 1}? 'disabled' : ''">
+                                <span class="page-link" th:if='${currentIndex == 1}'>First</span>
+                                <a class="page-link" th:if='${currentIndex != 1}'
+                                   th:href="${baseUrl}+'1'">First</a>
+                            </li>
+                            <li class="page-item" th:class="${currentIndex != 1}? '' : 'disabled'">
+                                <span class="page-link" th:if='${currentIndex == 1}'>«</span>
+                                <a class="page-link" th:if='${currentIndex != 1}'
+                                   th:href="@{|${baseUrl}$(currentIndex - 1)|}">«</a>
+                            </li>
+                            <li class="page-item" th:each="item : ${#numbers.sequence(beginIndex,endIndex)}"
+                                th:class="${item == currentIndex ? 'active' : '' }">
+                                <span class="page-link" th:if='${item == currentIndex}' th:text='${item}'/>
+                                <a class="page-link" th:if='${item != currentIndex}'
+                                   th:href="@{|${baseUrl}${item }|}">
+                                    <span th:text='${item}'/>
+                                </a>
+                            </li>
+                            <li class="page-item" th:class="${currentIndex != totalPageCount}? '' : 'disabled'">
+                                <span class="page-item" th:if='${currentIndex == totalPageCount}'>»</span>
+                                <a class="page-link" th:if='${currentIndex != totalPageCount}'
+                                   th:href="@{|${baseUrl}${currentIndex + 1}|}"
+                                >»</a>
+                            </li>
+                            <li class="page-item" th:class="${currentIndex == totalPageCount}? 'disabled' : ''">
+                                <span class="page-item" th:if='${currentIndex == totalPageCount}'>Last</span>
+                                <a class="page-item" th:if='${currentIndex != totalPageCount}'
+                                   th:href="@{|${baseUrl}${totalPageCount}|}">Last</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
