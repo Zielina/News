@@ -2,7 +2,6 @@ package ControllerNews.RestRespond;
 
 public class Articles {
 
-    private Integer id;
     private String author;
     private String title;
     private String description ;
@@ -24,13 +23,6 @@ public class Articles {
         this.imageUrl = imageUrl;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getAuthor() {
         return author;

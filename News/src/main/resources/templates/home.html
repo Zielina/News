@@ -187,14 +187,14 @@
                                 </a>
                             </li>
                             <li class="page-item" th:class="${currentIndex != totalPageCount}? '' : 'disabled'">
-                                <span class="page-item" th:if='${currentIndex == totalPageCount}'>»</span>
+                                <span class="page-link" th:if='${currentIndex == totalPageCount}'>»</span>
                                 <a class="page-link" th:if='${currentIndex != totalPageCount}'
                                    th:href="@{|${baseUrl}${currentIndex + 1}|}"
                                 >»</a>
                             </li>
                             <li class="page-item" th:class="${currentIndex == totalPageCount}? 'disabled' : ''">
-                                <span class="page-item" th:if='${currentIndex == totalPageCount}'>Last</span>
-                                <a class="page-item" th:if='${currentIndex != totalPageCount}'
+                                <span class="page-link" th:if='${currentIndex == totalPageCount}'>Last</span>
+                                <a class="page-link" th:if='${currentIndex != totalPageCount}'
                                    th:href="@{|${baseUrl}${totalPageCount}|}">Last</a>
                             </li>
                         </ul>

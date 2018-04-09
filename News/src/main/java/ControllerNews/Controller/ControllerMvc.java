@@ -132,11 +132,11 @@ public class ControllerMvc {
         log.info("New Search News : " + q);
         request.getSession().setAttribute("newsList", null);
         String value =  URLEncoder.encode(q, "UTF-8");
-        return "redirect:/newsSearch/"+ value+"/1";
+        return "redirect:/searchNews/"+ value+"/1";
 
     }
 
-    @RequestMapping(value = "/newsSearch/{q}/{pageNumber}", method = RequestMethod.GET)
+    @RequestMapping(value = "/searchNews/{q}/{pageNumber}", method = RequestMethod.GET)
     public ModelAndView showPagedSearchesNews(HttpServletRequest request,
                                               @PathVariable Integer pageNumber,
                                               @PathVariable(value = "q") String q) {
@@ -145,7 +145,7 @@ public class ControllerMvc {
             if (q != null) {
                 log.info("KeyWord :" + q);
                 PagedListHolder<?> pagedListHolder = (PagedListHolder<?>) request.getSession().getAttribute("newsList");
-                String baseUrl = getEndpoint() + "/newsSearch/"+q+"/";
+                String baseUrl = getEndpoint() + "/searchNews/"+q+"/";
                 if (pagedListHolder == null) {
                     log.info("PageListHolder Empty");
                     TemplateRequest newsRequest = new NewsRequest(getEndpoint() + "/news/search?q=" + URLEncoder.encode(q, "UTF-8"));

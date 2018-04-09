@@ -5,6 +5,7 @@ import ControllerNews.RestRespond.News;
 import lib.RequestFactory.ClassRequest.Configuration.RequestParametrization;
 import lib.RequestFactory.ClassRequest.DispatcherRequest.CacheDispatcherRequest;
 import lib.RequestFactory.ClassRequest.NewsPredict.Article;
+import lib.RequestFactory.OutputDataFront.OutputDataFront;
 import lib.RequestFactory.RequestFactory;
 import lib.RequestFactory.TemplateRequest.TemplateRequest;
 import org.apache.log4j.Logger;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.NestedServletException;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -27,6 +30,15 @@ public class Controller {
                            @PathVariable("category")  String category ) {
 
         try {
+            if(OutputDataFront.getCountriesAndCode().keySet().contains(lang.toLowerCase())){
+                lang = OutputDataFront.getCountriesAndCode().get(lang.toLowerCase());
+            }else if(!OutputDataFront.getCountriesAndCode().values().contains(lang.toLowerCase())){
+                throw new NewsNotFoundException("Country = "+lang);
+            }
+
+            if (!OutputDataFront.getCategories().contains(category.toLowerCase())){
+                throw new NewsNotFoundException("Category = "+category);
+            }
 
             List<Article>  articles = CacheDispatcherRequest.getRepoNews(RequestFactory.TOP_HEADLINES +"&&"+lang+category, new RequestParametrization.RequestParamBuilder().addCategory(category).addCoutry(lang).addPageSize(100).build());
             log.info("Size :"+articles.size());
